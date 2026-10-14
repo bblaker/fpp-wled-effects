@@ -1,0 +1,41 @@
+{
+	"repoName": "fpp-wled-effects",
+	"name": "WLED Effects",
+	"author": "Ben Blaker (bblaker)",
+	"description": "Control WLED controllers from FPP. Reads the effects, palettes, presets and playlists saved on each WLED and turns them into FPP Commands you can put in FPP playlists, the scheduler and command presets. WLED controllers FPP already knows about (MultiSync discovery and channel output addresses) are added automatically. Talks only to FPP on this player and to the WLED controllers on your network, over WLED's JSON API.",
+	"homeURL": "https://github.com/bblaker/fpp-wled-effects",
+	"srcURL": "https://github.com/bblaker/fpp-wled-effects.git",
+	"bugURL": "https://github.com/bblaker/fpp-wled-effects/issues",
+	"allowUpdates": 1,
+	"releaseNotesStyle": "gitHistory",
+	"privacy": {
+		"summary": "Talks only to the WLED controllers on your network that you add or FPP discovers, to read their effects and presets and change what they show.",
+		"sends": [
+			{
+				"to": "WLED controllers on your network (addresses you add or FPP already knows)",
+				"what": "WLED JSON API requests: reads of effects, palettes and presets; preset, effect and power changes",
+				"why": "To list and control WLED effects from FPP",
+				"alwaysOn": false
+			}
+		],
+		"collects": [],
+		"sensors": [],
+		"remoteAccess": "none",
+		"systemChanges": [
+			{
+				"kind": "core-settings",
+				"what": "Adds WLED command entries to an FPP playlist you pick, only when you press Add to FPP Playlist (through FPP's playlist API)"
+			}
+		],
+		"closedCode": false,
+		"other": "The plugin's REST routes under /api/plugin/fpp-wled-effects can change what your WLED controllers show; like the rest of FPP's API they need no password."
+	},
+	"versions": [
+		{
+			"minFPPVersion": "8.0",
+			"maxFPPVersion": "0",
+			"branch": "main",
+			"sha": ""
+		}
+	]
+}

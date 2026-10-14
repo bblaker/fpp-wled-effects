@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        # The PHP each supported FPP release ships with:
+        # FPP 8 (Debian bullseye) 7.4, FPP 9 (bookworm) 8.2, FPP 10 (trixie) 8.4.
+        php: ['7.4', '8.2', '8.4']
+    container: php:${{ matrix.php }}-cli
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: bash tests/run.sh
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JSON files parse
+        run: |
+          for f in pluginInfo.json commands/descriptions.json; do
+            python3 -m json.tool "$f" > /dev/null && echo "ok $f"
+          done
+
+      - name: pluginInfo.json matches FPP's plugin schema
+        run: |
+          pipx run check-jsonschema \
+            --schemafile https://raw.githubusercontent.com/FalconChristmas/fpp-plugin-Template/master/pluginInfo.schema.json \
+            pluginInfo.json
+
+      - name: Shell scripts
+        run: |
+          for f in commands/*.sh scripts/*.sh tests/run.sh; do
+            bash -n "$f"
+            [ -x "$f" ] || { echo "$f is not executable"; exit 1; }
+          done
+          shellcheck -S warning commands/*.sh scripts/*.sh tests/run.sh
+
+      - name: JavaScript syntax
+        run: node --check js/fpp-wled-effects.js
