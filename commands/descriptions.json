@@ -1,0 +1,268 @@
+[
+    {
+        "name": "WLED - Apply Preset",
+        "script": "apply-preset.sh",
+        "args": [
+            {
+                "name": "device",
+                "description": "WLED Device",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/devices",
+                "default": "All WLED Devices",
+                "help": "The WLED controller to send to, or All WLED Devices for every enabled device. Manage devices on Content Setup > WLED Effects."
+            },
+            {
+                "name": "preset",
+                "description": "Preset",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/presets",
+                "help": "WLED preset to apply, by name. With All WLED Devices, every device that has a preset with this name applies it."
+            },
+            {
+                "name": "takeover",
+                "description": "Override FPP Live Data",
+                "type": "bool",
+                "optional": true,
+                "default": "false",
+                "help": "When this WLED is also receiving pixel data from FPP (E1.31/DDP/ArtNet), show this instead of the live data until the live data stops."
+            }
+        ]
+    },
+    {
+        "name": "WLED - Start Playlist",
+        "script": "start-playlist.sh",
+        "args": [
+            {
+                "name": "device",
+                "description": "WLED Device",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/devices",
+                "default": "All WLED Devices",
+                "help": "The WLED controller to send to, or All WLED Devices for every enabled device. Manage devices on Content Setup > WLED Effects."
+            },
+            {
+                "name": "playlist",
+                "description": "WLED Playlist",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/playlists",
+                "help": "WLED playlist to start, by name. The playlist runs on the WLED controller itself, using the timings saved in WLED."
+            },
+            {
+                "name": "takeover",
+                "description": "Override FPP Live Data",
+                "type": "bool",
+                "optional": true,
+                "default": "false",
+                "help": "When this WLED is also receiving pixel data from FPP (E1.31/DDP/ArtNet), show this instead of the live data until the live data stops."
+            }
+        ]
+    },
+    {
+        "name": "WLED - Run Effect",
+        "script": "run-effect.sh",
+        "args": [
+            {
+                "name": "device",
+                "description": "WLED Device",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/devices",
+                "default": "All WLED Devices",
+                "help": "The WLED controller to send to, or All WLED Devices for every enabled device. Manage devices on Content Setup > WLED Effects."
+            },
+            {
+                "name": "effect",
+                "description": "Effect",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/effects",
+                "help": "WLED effect to run, by name."
+            },
+            {
+                "name": "palette",
+                "description": "Palette",
+                "type": "string",
+                "optional": true,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/palettes",
+                "allowBlanks": true,
+                "blankLabel": "(keep current)",
+                "help": "Color palette for the effect. Leave blank to keep the current palette."
+            },
+            {
+                "name": "color1",
+                "description": "Color 1",
+                "type": "color",
+                "optional": true,
+                "default": "#ffaa00",
+                "help": "Primary color."
+            },
+            {
+                "name": "color2",
+                "description": "Color 2",
+                "type": "color",
+                "optional": true,
+                "default": "#000000",
+                "help": "Secondary (often background) color."
+            },
+            {
+                "name": "color3",
+                "description": "Color 3",
+                "type": "color",
+                "optional": true,
+                "default": "#000000",
+                "help": "Tertiary color."
+            },
+            {
+                "name": "speed",
+                "description": "Speed",
+                "type": "range",
+                "min": 0,
+                "max": 255,
+                "default": "128",
+                "optional": true,
+                "help": "Effect speed (WLED's sx)."
+            },
+            {
+                "name": "intensity",
+                "description": "Intensity",
+                "type": "range",
+                "min": 0,
+                "max": 255,
+                "default": "128",
+                "optional": true,
+                "help": "Effect intensity (WLED's ix)."
+            },
+            {
+                "name": "brightness",
+                "description": "Brightness (0 = unchanged)",
+                "type": "range",
+                "min": 0,
+                "max": 255,
+                "default": "0",
+                "optional": true,
+                "help": "Master brightness to set along with the effect. 0 leaves the current brightness alone."
+            },
+            {
+                "name": "segments",
+                "description": "Segments",
+                "type": "string",
+                "optional": true,
+                "default": "Selected",
+                "contents": [
+                    "Selected",
+                    "All",
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15"
+                ],
+                "help": "Which WLED segments get the effect: the ones selected in WLED, all of them, or one segment by number."
+            },
+            {
+                "name": "takeover",
+                "description": "Override FPP Live Data",
+                "type": "bool",
+                "optional": true,
+                "default": "false",
+                "help": "When this WLED is also receiving pixel data from FPP (E1.31/DDP/ArtNet), show this instead of the live data until the live data stops."
+            }
+        ]
+    },
+    {
+        "name": "WLED - Power",
+        "script": "power.sh",
+        "args": [
+            {
+                "name": "device",
+                "description": "WLED Device",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/devices",
+                "default": "All WLED Devices",
+                "help": "The WLED controller to send to, or All WLED Devices for every enabled device. Manage devices on Content Setup > WLED Effects."
+            },
+            {
+                "name": "state",
+                "description": "Power",
+                "type": "string",
+                "optional": false,
+                "default": "On",
+                "contents": [
+                    "On",
+                    "Off",
+                    "Toggle"
+                ],
+                "help": "Turn the WLED output on, off, or toggle it."
+            }
+        ]
+    },
+    {
+        "name": "WLED - Brightness",
+        "script": "brightness.sh",
+        "args": [
+            {
+                "name": "device",
+                "description": "WLED Device",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/devices",
+                "default": "All WLED Devices",
+                "help": "The WLED controller to send to, or All WLED Devices for every enabled device. Manage devices on Content Setup > WLED Effects."
+            },
+            {
+                "name": "brightness",
+                "description": "Brightness",
+                "type": "range",
+                "min": 0,
+                "max": 255,
+                "default": "128",
+                "optional": false,
+                "help": "WLED master brightness. 0 turns the output off."
+            }
+        ]
+    },
+    {
+        "name": "WLED - Live Override",
+        "script": "live-override.sh",
+        "args": [
+            {
+                "name": "device",
+                "description": "WLED Device",
+                "type": "string",
+                "optional": false,
+                "contentListUrl": "api/plugin/fpp-wled-effects/list/devices",
+                "default": "All WLED Devices",
+                "help": "The WLED controller to send to, or All WLED Devices for every enabled device. Manage devices on Content Setup > WLED Effects."
+            },
+            {
+                "name": "mode",
+                "description": "Override Live Data",
+                "type": "string",
+                "optional": false,
+                "default": "Until Live Data Ends",
+                "contents": [
+                    "Off",
+                    "Until Live Data Ends",
+                    "Until Reboot"
+                ],
+                "help": "Whether WLED shows its own effects instead of pixel data streamed from FPP. Off gives FPP's data priority again."
+            }
+        ]
+    }
+]
