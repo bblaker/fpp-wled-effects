@@ -98,6 +98,10 @@ All under `/api/plugin/fpp-wled-effects/`:
 tests/run.sh --docker   # unit + integration tests against mock WLED controllers and a mock FPP API
 ```
 
+CI (`.github/workflows/ci.yml`) runs the tests on PHP 7.4, 8.2 and 8.4 (the versions FPP 8, 9 and 10
+ship), validates `pluginInfo.json` against FPP's plugin schema, and checks the shell scripts and page
+JavaScript.
+
 ## License
 
 GPL-2.0, see [LICENSE](LICENSE).

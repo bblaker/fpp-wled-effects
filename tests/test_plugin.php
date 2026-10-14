@@ -24,6 +24,14 @@ use FppWledEffects\Lists;
 use FppWledEffects\Util;
 use FppWledEffects\Wled;
 
+// Write straight to STDOUT: output through PHP's output layer counts as
+// "headers sent" in the CLI, after which the API callbacks under test can't
+// set their HTTP status codes (enforced from PHP 8.4).
+function out($s)
+{
+    fwrite(STDOUT, $s);
+}
+
 $failures = 0;
 $count = 0;
 
@@ -32,10 +40,10 @@ function check($cond, $label, $detail = null)
     global $failures, $count;
     $count++;
     if ($cond) {
-        echo "  ok   $label\n";
+        out("  ok   $label\n");
     } else {
         $failures++;
-        echo "  FAIL $label" . ($detail !== null ? "\n       " . (is_string($detail) ? $detail : json_encode($detail)) : '') . "\n";
+        out("  FAIL $label" . ($detail !== null ? "\n       " . (is_string($detail) ? $detail : json_encode($detail)) : '') . "\n");
     }
 }
 
@@ -73,7 +81,7 @@ function clearPosts()
 
 function section($name)
 {
-    echo "\n$name\n";
+    out("\n$name\n");
 }
 
 /* ------------------------------------------------------------------ */
@@ -357,5 +365,5 @@ $j = json_decode(fppWledEffects_saveSettings(), true);
 check($j['autoImport'] === false, 'POST settings');
 
 /* ------------------------------------------------------------------ */
-echo "\n" . ($count - $failures) . " passed, $failures failed\n";
+out("\n" . ($count - $failures) . " passed, $failures failed\n");
 exit($failures ? 1 : 0);
