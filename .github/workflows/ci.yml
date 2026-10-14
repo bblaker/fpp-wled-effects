@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Weekly, so a new FPP release that needs a pluginInfo.json update
+    # (see tests/check_manifest.py) is noticed even without new commits.
+    - cron: '17 6 * * 1'
 
 permissions:
   contents: read
@@ -30,12 +34,35 @@ jobs:
       - name: Run tests
         run: bash tests/run.sh
 
+  fpp:
+    name: FPP ${{ matrix.fpp }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        # Latest release of each FPP major pluginInfo.json supports.
+        fpp: ['8.5.1', '9.5.3', '10.2']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull FPP image
+        run: docker pull -q falconchristmas/fpp:${{ matrix.fpp }}
+      - name: Plugin inside FPP ${{ matrix.fpp }}
+        run: bash tests/fpp_integration.sh ${{ matrix.fpp }}
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # check_manifest.py looks up pinned commits
+
+      - name: pluginInfo.json versions cover the newest FPP
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 tests/check_manifest.py
 
       - name: JSON files parse
         run: |
@@ -51,11 +78,11 @@ jobs:
 
       - name: Shell scripts
         run: |
-          for f in commands/*.sh scripts/*.sh tests/run.sh; do
+          for f in commands/*.sh scripts/*.sh tests/*.sh; do
             bash -n "$f"
             [ -x "$f" ] || { echo "$f is not executable"; exit 1; }
           done
-          shellcheck -S warning commands/*.sh scripts/*.sh tests/run.sh
+          shellcheck -S warning commands/*.sh scripts/*.sh tests/*.sh
 
       - name: JavaScript syntax
         run: node --check js/fpp-wled-effects.js

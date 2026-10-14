@@ -37,7 +37,8 @@ In FPP go to **Content Setup > Plugin Manager**, paste
 `https://raw.githubusercontent.com/bblaker/fpp-wled-effects/main/pluginInfo.json` into the plugin URL box
 and install. Restart FPPD when FPP asks, so the new commands are registered.
 
-Requires FPP 8.0 or later. No extra packages are installed.
+Works on FPP 8, 9 and 10 (tested on 8.5.1, 9.5.3 and 10.2). FPP 10 installs the latest version from
+`main`; FPP 8 and 9 install a fixed, tested version. No extra packages are installed.
 
 ## Using it
 
@@ -95,12 +96,26 @@ All under `/api/plugin/fpp-wled-effects/`:
 ## Development
 
 ```sh
-tests/run.sh --docker   # unit + integration tests against mock WLED controllers and a mock FPP API
+tests/run.sh --docker                       # unit + integration tests against mock WLED controllers and a mock FPP API
+tests/fpp_integration.sh 8.5.1 9.5.3 10.2   # the plugin inside real FPP (Docker images), end to end
+python3 tests/check_manifest.py             # pluginInfo.json versions cover the newest FPP release
 ```
 
 CI (`.github/workflows/ci.yml`) runs the tests on PHP 7.4, 8.2 and 8.4 (the versions FPP 8, 9 and 10
-ship), validates `pluginInfo.json` against FPP's plugin schema, and checks the shell scripts and page
-JavaScript.
+ship), runs `tests/fpp_integration.sh` against FPP 8.5.1, 9.5.3 and 10.2, validates `pluginInfo.json`
+against FPP's plugin schema, and checks the shell scripts and page JavaScript. It also runs weekly, so a
+new FPP release shows up as a failing `check_manifest.py`.
+
+### Supporting a new FPP major
+
+FPP shows a plugin as "Not updated for FPP N" unless its newest `versions` entry starts at FPP N.
+When a new FPP major ships:
+
+1. Run `tests/fpp_integration.sh <new version>` and fix anything it finds.
+2. In `pluginInfo.json`, close the current open-ended entry (`"maxFPPVersion": "<old major>.99"`), pin it
+   to the last commit tested on that major (`"sha"`, `"allowUpdates": 0`), and add a new open-ended
+   entry starting at `"<new major>.0"`.
+3. Add the new version to the `fpp` matrix in `.github/workflows/ci.yml`.
 
 ## License
 
